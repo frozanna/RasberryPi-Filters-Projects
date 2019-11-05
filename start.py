@@ -27,7 +27,7 @@ def get_image(camera):
 
 def loop(running, cam_obj):
 
-    while(running):
+    while running:
         # pobierz obraz z kamery
         img = get_image(cam_obj)
 
@@ -37,8 +37,9 @@ def loop(running, cam_obj):
             eyes = detect_eyes(img, face)
             if len(eyes) == 2:
                 (x1, y1, w1, h1) = eyes[0]
-                (x2, y2, w2, h2) = eyes[1]
-                add_filter(img, test_filter, int(x1 + x2 + w2 + w1), y1, face)
+                # (x2, y2, w2, h2) = eyes[1]
+                (x, y, w, h) = face
+                add_filter(img, test_filter, x, y1, face)
 
         # wyswietl obraz
         cv2.imshow("Smile!", img)
@@ -47,7 +48,7 @@ def loop(running, cam_obj):
         if cv2.waitKey(1) == ord('q'):
             running = False
 
-    sleep(1)
+    # sleep(1)
 
 
 def main():

@@ -5,7 +5,7 @@ test_filter = (test_filter_img, 0.55)
 
 
 # skalowanie filtra do szerokosci twarzy
-def resize_filter(filter, face, eye_y, offset):  #offset zalezny od filtra
+def resize_filter(filter, face, eye_y, offset):  # offset zalezny od filtra
     (x, y, face_width, face_height) = face
     (filter_height, filter_width) = (filter.shape[0], filter.shape[1])
     scale = 1.0 * face_width / filter_width
@@ -14,11 +14,11 @@ def resize_filter(filter, face, eye_y, offset):  #offset zalezny od filtra
     (filter_height, filter_width) = (filter.shape[0], filter.shape[1])
     new_y = eye_y + filter_height - int(filter_height * offset)  # ustalamy nowe polozenie filtru
 
-    if(new_y < 0):  # jezeli filtr wychodzi poza kamere to go ucinamy
+    if new_y < 0:  # jezeli filtr wychodzi poza kamere to go ucinamy
         filter = filter[abs(new_y)::, :, :]
         new_y = 0
 
-    return (filter, new_y)
+    return filter, new_y
 
 
 # dodawanie filtra do obrazu

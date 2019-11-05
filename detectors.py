@@ -5,6 +5,7 @@ import cv2
 
 face_detector = cv2.CascadeClassifier('C:\\Users\\Ania\\PycharmProjects\\RasberryPI\\venv\\Lib\\site-packages\\cv2\\data\\haarcascade_frontalface_default.xml')
 eyes_detector = cv2.CascadeClassifier('C:\\Users\\Ania\\PycharmProjects\\RasberryPI\\venv\\Lib\\site-packages\\cv2\\data\\haarcascade_eye.xml')
+# eyes_detector = cv2.CascadeClassifier('C:/Users/Dominika/PycharmProjects/RasberryPi-Filters-Projects-master/frontalEyes35x16.xml')
 
 
 def detect_faces(camera):
