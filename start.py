@@ -1,16 +1,17 @@
 import cv2
-import sys
-import os
 from time import sleep
-from filters import test_filter, add_filter
-from detectors import detect_faces, detect_eyes
+from filters import f_length, add_filters
+from detectors import detect_faces
+from servo import Servo, get_position
+from thread import ServoThread
 
 
 # inicjalizacja kamery i jej interfejsu
 def camera_init():
     print("Initializing camera...")
     for i in range(0, 5):
-        camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        camera = cv2.VideoCapture(0
+        )
         if camera.isOpened():
             print("Camera init OK")
             return camera
@@ -25,37 +26,52 @@ def get_image(camera):
     return frame
 
 
-def loop(running, cam_obj):
-
+def loop(cam_obj, servo):
+    i = 0;
+    running = True
     while running:
         # pobierz obraz z kamery
-        img = get_image(cam_obj)
+        camera = get_image(cam_obj)
 
-        faces = detect_faces(img)
+        faces = detect_faces(camera)
 
         for face in faces:
-            eyes = detect_eyes(img, face)
-            if len(eyes) == 2:
-                (x1, y1, w1, h1) = eyes[0]
-                # (x2, y2, w2, h2) = eyes[1]
-                (x, y, w, h) = face
-                add_filter(img, test_filter, x, y1, face)
+            add_filters(camera, i, face)
 
         # wyswietl obraz
-        cv2.imshow("Smile!", img)
+        cv2.imshow("Smile!", camera)
+        
+        if len(faces) == 1:
+            (camera_height, camera_width) = (camera.shape[0], camera.shape[1])
+            (face_x, face_y, face_width, face_height) = faces[0]
+            position = get_position(camera_width, face_x, face_width)
+            t = ServoThread(position, servo)
+            t.start()
+        else:
+            t = ServoThread(7.5, servo)
+            t.start()
+
+        key = cv2.waitKey(1)
+        if key == ord('n'):
+            i += 1
+            i %= f_length
+            
+        if key == ord('b'):
+            i -= 1
+            if i < 0:
+                i = f_length -1
 
         # jesli odczytamy wcisniecie klawisza q, to wychodzimy
-        if cv2.waitKey(1) == ord('q'):
+        if key == ord('q'):
             running = False
-
-    # sleep(1)
 
 
 def main():
     cam_obj = camera_init()
-    running = True
-    loop(running, cam_obj)
-
+    servo = Servo()
+    loop(cam_obj, servo)
+    servo.stop()
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()
